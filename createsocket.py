@@ -17,9 +17,6 @@ Content-length: 100
 
 <h1 style="text-align: center;color: blue;">Hello!</h1>'''.replace(b"\n", b"\r\n")
 
-
-
-
 with socket.socket() as server_sock:
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 
