@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% from "macros.html" import nav_link with context %}
+<html lang="en">
+<head>
+    <meta name="BaseTemplate" charset="UTF-8">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <style type="text/css">
+        .heading {
+            color: blue;
+            background-color: #3A7734;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="heading">
+        <h1>
+            {% block heading %}
+                <h1>My Experiments</h1>
+            {% endblock %}
+        </h1>
+    </div>
+    <div class="container">
+        {% block container %}
+        {% endblock %}
+        <p>string: {{my_string}}</p>
+        <p>list value: {{my_list[3]}}</p>
+        <ol>
+            {% for p in my_list %}
+            <li>{{loop.index}}item: {{p}}</li>
+            {% endfor %}
+        </ol>
+    </div>
+    <div class="footer">
+        {% block footer %}
+            Copyright Saksham Sharda
+            <br>
+        {% endblock %}
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" defer></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js" defer></script>
+    <script src="Scripts/experiment.js"></script>
+</body>
+</html>
