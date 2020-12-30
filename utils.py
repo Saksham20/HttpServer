@@ -3,6 +3,9 @@ import socket
 from pathlib import Path
 import mimetypes
 
+# note: constants accodding to PEP8 are defined by capital letters and are present outside any function.
+#  its a better practice to encapsulate all the useful action oriented code inside a function. Stuff that
+#  are at the module level are these constants only!
 FILE_RESPONSE_TEMPLATE = """\
 HTTP/1.1 200 OK
 Content-type: {content_type}
@@ -22,6 +25,7 @@ class Request(NamedTuple):
     headers: Dict[str, bytes]
     method: str
     path: str
+    body: str
 
     @classmethod
     def get_socket_details(cls, sock: socket.socket, buff: int = 16_256):
@@ -32,17 +36,24 @@ class Request(NamedTuple):
             method, path, _ = soc_data_list[0].split(' ')
         except ValueError as e:
             raise Exception('not a valid http request_line')
-        path = path.replace('/', '')
-        headers = {}
-        for soc_data_line in soc_data_list[1:]:
-            if soc_data_line != '':
-                try:
-                    head_key, head_val = soc_data_line.split(': ')
-                except ValueError as e:
-                    raise Exception('incorrect header format of http')
-                headers[head_key] = head_val
 
-        return cls(headers=headers, method=method, path=path)
+        try:
+            body_start_index = soc_data_list.index('')+2
+        except ValueError:
+            body_start_index = len(soc_data_list)-1
+        # get header info:
+        headers = {}
+        for soc_data_line in soc_data_list[1:body_start_index-2]:
+            try:
+                head_key, head_val = soc_data_line.split(': ')
+            except ValueError as e:
+                raise Exception('incorrect header format of http')
+            headers[head_key] = head_val
+        # get body info:
+        body = ''
+        if len(soc_data_list)>body_start_index:
+            body = '\n'.join(soc_data_list[body_start_index:])[2:]
+        return cls(headers=headers, method=method, path=path, body=body)
 
 
 def serve_file(serv_sock: socket, path: str = 'index.html') -> None:

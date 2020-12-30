@@ -33,6 +33,7 @@ with socket.socket() as server_sock:
                   f'addr:{soc_details.path}\n')
             for key, value in soc_details.headers.items():
                 print(f'{key}:{value}')
+            print('body:\n'+soc_details.body)
             with client_sock:
                 serve_file(client_sock, path=soc_details.path)
         except:
