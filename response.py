@@ -2,11 +2,8 @@ from typing import Dict, NamedTuple, BinaryIO
 import socket
 from pathlib import Path
 import mimetypes
-import socket
+from .request import Request
 
-# note: constants accodding to PEP8 are defined by capital letters and are present outside any function.
-#  its a better practice to encapsulate all the useful action oriented code inside a function. Stuff that
-#  are at the module level are these constants only!
 FILE_RESPONSE_TEMPLATE = "HTTP/1.1 {status_code}\n{header}\n\n{body}"""
 
 BAD_REQUEST_RESPONSE = b'''\
@@ -17,47 +14,6 @@ Content-length: 11
 Bad Request'''.replace(b"\n", b"\r\n")
 
 TEMPLATES_ROOT = Path(__file__).parent/'views'
-
-
-# TODO: create a response class that holds the default 404,200 etc coded responses, version
-#  and the standard headers with the body/content/encoding fields? Find out what these are.
-#  encoding  can be found from mimetypes. Also add logic for cURL: it should look for a
-#  'expect: 100-continue' and then sock.send() the 100 continue in the response_line
-class Request(NamedTuple):
-    headers: Dict[str, bytes]
-    method: str
-    path: str
-    body: str
-    socket: socket.socket
-
-    @classmethod
-    def get_socket_details(cls, sock: socket.socket, buff: int = 16_256):
-        soc_data = sock.recv(buff).decode('utf8')
-        soc_data_list = soc_data.split('\r\n')
-        assert len(soc_data_list) >= 0, 'socket has no message'
-        try:
-            method, path, _ = soc_data_list[0].split(' ')
-        except ValueError as e:
-            raise Exception('not a valid http request_line')
-
-        try:
-            body_start_index = soc_data_list.index('') + 2
-        except ValueError:
-            body_start_index = len(soc_data_list) - 1
-        # get header info:
-        headers = {}
-        for soc_data_line in soc_data_list[1:body_start_index - 2]:
-            try:
-                head_key, head_val = soc_data_line.split(': ')
-            except ValueError as e:
-                raise Exception('incorrect header format of http')
-            headers[head_key] = head_val
-        # get body info:
-        body = ''
-        if len(soc_data_list) > body_start_index:
-            body = '\n'.join(soc_data_list[body_start_index:]).lstrip('\n')
-        return cls(headers=headers, method=method, path=path, body=body, socket=sock)
-
 
 class Response:
     generic = FILE_RESPONSE_TEMPLATE

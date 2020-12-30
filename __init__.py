@@ -1,1 +1,2 @@
-from .utils import Request, Response
+from .request import Request
+from .response import Response
