@@ -1,6 +1,4 @@
 from typing import Dict, NamedTuple, BinaryIO
-from pathlib import Path
-import mimetypes
 import socket
 
 class Request(NamedTuple):

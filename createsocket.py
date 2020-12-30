@@ -3,6 +3,7 @@ from ServerBuilding import *
 from threading import Thread
 from time import sleep
 
+
 # note: byte strings are just a string of bytes. using b'', python automatically
 #  encodes the typed string using ascii.:
 #  b'string' == 'string'.encode('ascii'/'utf8')
@@ -34,7 +35,6 @@ class HTTPServer:
                 print(f'\ndeployed thread {count}\n')
 
     def _serve_file(self, client_sock):
-        sleep(3)
         try:
             soc_request = Request.get_socket_details(client_sock)
             if "100-continue" in soc_request.headers.get("expect", ""):
@@ -42,9 +42,6 @@ class HTTPServer:
                 return
             print(f'method used:{soc_request.method}\n'
                   f'addr:{soc_request.path}\n')
-            for key, value in soc_request.headers.items():
-                print(f'{key}:{value}')
-            print('body:\n' + soc_request.body)
         except:
             with client_sock:
                 client_sock.sendall(Response.bad_response)
@@ -52,8 +49,8 @@ class HTTPServer:
         try:
             soc_response = Response(soc_request)
             soc_response.send_response()
-        except:
-            raise Exception('could not generate response')
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':

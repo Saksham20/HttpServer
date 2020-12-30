@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}
+    Home page
+{% endblock %}
+{% block heading %}
+    {{ super() }}
+    <h2>Request Type: {{ request.method }} </h2>
+{% endblock %}
+{% block container %}
+    <h3>Address requested: {{ request.path }}</h3>
+    <h3>Header section:</h3>
+    <ol>
+        {% for key,value in request.headers.items() %}
+            <li><b>{{ key }}:</b> {{ value }}</li>
+        {% endfor %}
+    </ol>
+    <h3>Request body:</h3>
+    <p>{{ request.body }}</p>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+{% endblock %}

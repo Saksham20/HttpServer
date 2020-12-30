@@ -24,20 +24,13 @@
     <div class="heading">
         <h1>
             {% block heading %}
-                <h1>My Experiments</h1>
+                <h1>Inner workings of HTTP communication:</h1>
             {% endblock %}
         </h1>
     </div>
     <div class="container">
         {% block container %}
         {% endblock %}
-        <p>string: {{my_string}}</p>
-        <p>list value: {{my_list[3]}}</p>
-        <ol>
-            {% for p in my_list %}
-            <li>{{loop.index}}item: {{p}}</li>
-            {% endfor %}
-        </ol>
     </div>
     <div class="footer">
         {% block footer %}

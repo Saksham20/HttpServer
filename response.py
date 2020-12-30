@@ -1,5 +1,4 @@
-from typing import Dict, NamedTuple, BinaryIO
-import socket
+import jinja2
 from pathlib import Path
 import mimetypes
 from .request import Request
@@ -13,7 +12,7 @@ Content-length: 11
 
 Bad Request'''.replace(b"\n", b"\r\n")
 
-TEMPLATES_ROOT = Path(__file__).parent/'views'
+TEMPLATES_ROOT = Path(__file__).parent/'views/Templates'
 
 class Response:
     generic = FILE_RESPONSE_TEMPLATE
@@ -51,9 +50,11 @@ class Response:
 
     def generate_body(self) -> str:
         if self.file_requested is not None:
-            with open(self.file_requested, 'r') as f:
-                body = f.read(self.header['content_length'])
-                return body
+            templateLoader = jinja2.FileSystemLoader(searchpath=TEMPLATES_ROOT)
+            templateEnv = jinja2.Environment(loader=templateLoader)
+            template = templateEnv.get_template(self.file_requested.name)
+            outputText = template.render(request=self.request)
+            return outputText
         else:
             return ''
 
