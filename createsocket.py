@@ -32,7 +32,7 @@ class HTTPServer:
                                      args=(client_sock,))
                 thread_loop.start()
                 thread_list.append(thread_loop)
-                print(f'\ndeployed thread {count}\n')
+                print(f'\ndeployed thread {count}\n{client_addr}\n')
 
     def _serve_file(self, client_sock):
         try:
@@ -49,6 +49,8 @@ class HTTPServer:
         try:
             soc_response = Response(soc_request)
             soc_response.send_response()
+            print(f'\nresponse sent len:{len(soc_response.body)}, '
+                  f'message:{soc_response.body[:10]}\nheader: {soc_response.header}')
         except Exception as e:
             print(e)
 
