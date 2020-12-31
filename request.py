@@ -1,6 +1,7 @@
 from typing import Dict, NamedTuple, BinaryIO
 import socket
 
+
 class Request(NamedTuple):
     headers: Dict[str, bytes]
     method: str

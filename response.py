@@ -14,6 +14,7 @@ Bad Request'''.replace(b"\n", b"\r\n")
 
 TEMPLATES_ROOT = Path(__file__).parent/'views/Templates'
 
+
 class Response:
     generic = FILE_RESPONSE_TEMPLATE
     bad_response = BAD_REQUEST_RESPONSE
@@ -62,9 +63,9 @@ class Response:
         if self.file_requested is None:
             self.request.socket.sendall(self.bad_response)
             return
-        header_string = self.header.__str__().strip('{').strip('}').replace(', ','\n').replace('\'','')
+        header_string = self.header.__str__().strip('{').strip('}').replace(', ', '\n').replace('\'', '')
         response = self.generic.format(status_code=self.response_status,
                                        header=header_string,
                                        body=self.body)
-        response = response.replace('\n','\r\n')
+        response = response.replace('\n', '\r\n')
         self.request.socket.sendall(response.encode('ascii'))
