@@ -26,13 +26,13 @@ class HTTPServer:
 
     def start_server(self):
         if not self._server_start:
-            th = Thread(target=self._run_process, args=())
+            th = Thread(target=self._bind_socket, args=())
             th.start()
             self._server_start = True
         else:
             print('server already started')
 
-    def _run_process(self):
+    def _bind_socket(self):
         with socket.socket() as server_sock:
             server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             server_sock.bind((self.host, self.port))
