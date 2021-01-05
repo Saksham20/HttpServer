@@ -48,9 +48,9 @@ class Response:
                 rs = requests.get(self.resource_requested)
                 return rs.headers
             content_type, encoding = mimetypes.guess_type(self.resource_requested)
-            content_type = 'text/html' if content_type is None else content_type
+            content_type = 'text/html ;charset=utf-8' if content_type is None else content_type+';charset=utf-8'
         else:
-            content_type, encoding = 'text/html', None
+            content_type, encoding = 'text/html ;charset=utf-8', None
         content_length = len(self.body)
         header_in.update(content_length=content_length, content_type=content_type)
         if encoding is not None:
