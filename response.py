@@ -3,6 +3,7 @@ from pathlib import Path
 import mimetypes
 from .request import Request
 import requests
+
 FILE_RESPONSE_TEMPLATE = "HTTP/1.1 {status_code}\n{header}\n\n{body}"""
 
 BAD_REQUEST_RESPONSE = '''\
@@ -30,9 +31,10 @@ class Response:
         self.header = {} if header is None else header
         self.header.update(self.generate_header())
 
-
-    def _get_file_path(self) -> str:
+    def _get_file_path(self) -> [str, None]:
         base_path = VIEWS_ROOT
+        if 'favicon' in self.request.path:
+            return
         if 'http' in self.request.path:
             return self.request.path
         path = self.request.path.lstrip('/')
@@ -48,7 +50,7 @@ class Response:
                 rs = requests.get(self.resource_requested)
                 return rs.headers
             content_type, encoding = mimetypes.guess_type(self.resource_requested)
-            content_type = 'text/html ;charset=utf-8' if content_type is None else content_type+';charset=utf-8'
+            content_type = 'text/html ;charset=utf-8' if content_type is None else content_type + ';charset=utf-8'
         else:
             content_type, encoding = 'text/html ;charset=utf-8', None
         content_length = len(self.body)
@@ -60,7 +62,7 @@ class Response:
     def generate_body(self) -> str:
         if self.resource_requested is not None:
             print(self.resource_requested)
-            if Path(self.resource_requested).suffix=='.html':
+            if Path(self.resource_requested).suffix == '.html':
                 template_loader = jinja2.FileSystemLoader(searchpath=VIEWS_ROOT/'Templates')
                 template_env = jinja2.Environment(loader=template_loader)
                 template = template_env.get_template(Path(self.resource_requested).name)
@@ -68,7 +70,7 @@ class Response:
             elif 'http' in self.resource_requested:
                 output_text = requests.get(self.resource_requested).text
             else:
-                with open(self.resource_requested,'r') as f:
+                with open(self.resource_requested, 'r') as f:
                     output_text = f.read()
             return output_text
         else:
